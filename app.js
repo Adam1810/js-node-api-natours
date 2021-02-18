@@ -3,12 +3,7 @@ const express = require('express');
 
 const app = express();
 
-// app.get('/test'),
-//   (req, res) => {
-//     res
-//       .status(200)
-//       .json({ message: 'Hello from the service sie!', app: 'Natours' });
-//   };
+app.use(express.json());
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
@@ -23,6 +18,8 @@ app.get('/api/v1/tours', (req, res) => {
     },
   });
 });
+
+app.post('/api/vi/tours', (req, res) => {});
 
 const port = 3000;
 app.listen(port, () => {
