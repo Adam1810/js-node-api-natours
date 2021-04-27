@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const tourchSchema = new mongoose.Schema(
+const tourSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -45,6 +45,10 @@ const tourchSchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -52,25 +56,43 @@ const tourchSchema = new mongoose.Schema(
   }
 );
 
-tourchSchema.virtual('durationWeek').get(function () {
+tourSchema.virtual('durationWeek').get(function () {
   return this.duration / 7;
 });
 
 // Document Middelware: runs before, .save() and .create()
-tourchSchema.pre('save', function (next) {
+tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-tourchSchema.pre('save', function (next) {
+tourSchema.pre('save', function (next) {
   console.log('Will save document');
   next();
 });
 
-tourchSchema.post('save', function (doc, next) {
+tourSchema.post('save', function (doc, next) {
   console.log(doc);
   next();
 });
-const Tour = mongoose.model('Tour', tourchSchema);
+
+// QUERY MIDDELWARE
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+  this.start = Date.now();
+  next();
+});
+
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(`Query took ${Date.now() - this.sart} milliseconds!`);
+  next();
+});
+
+tourSchema.pre('aggregate', function (next) {
+  next();
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+});
+
+const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
