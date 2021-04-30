@@ -1,34 +1,40 @@
-exports.getAllUsers = (req, res) => {
+const User = require('./../models/userModel');
+const catchAsync = require('./../utils/catchAsync');
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find();
+
+  // SEND RESPONSE
+  res.status(200).json({
+    status: 'success',
+    results: users.length,
+    data: {
+      users,
+    },
+  });
+
+  next();
+});
+exports.getUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'this route is not yet defined',
+    message: 'This route is not yet defined!',
   });
 };
-
-exports.getUsers = (req, res) => {
+exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'this route is not yet defined',
+    message: 'This route is not yet defined!',
   });
 };
-
-exports.updateUsers = (req, res) => {
+exports.updateUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'this route is not yet defined',
+    message: 'This route is not yet defined!',
   });
 };
-
-exports.deleteUsers = (req, res) => {
+exports.deleteUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'this route is not yet defined',
-  });
-};
-
-exports.createUsers = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'this route is not yet defined',
+    message: 'This route is not yet defined!',
   });
 };
